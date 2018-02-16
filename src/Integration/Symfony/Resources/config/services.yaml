@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autowire: true
+        public: false
+
+    Biig\Component\User\Jwt\Command\JwtGeneratorCommand:
+        tags:
+            - { name: 'console.command' }
