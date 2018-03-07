@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class JwtGeneratorCommand extends Command
 {
     /**
-     * @var GeneratorInterface
+     * @var JwtGeneratorInterface
      */
     private $generator;
 
@@ -53,6 +53,13 @@ HELP
         // so the following code is acceptable and avoid a modification of the
         // user repository (to add a `getFirstUser` method)
         $users = $this->userRepository->findAll();
+
+        if (empty($users)) {
+            $output->writeln('No users provided');
+
+            return;
+        }
+
         $user = reset($users);
 
         if ($input->hasOption('role') && !in_array($input->getOption('role'), $user->getRoles())) {
