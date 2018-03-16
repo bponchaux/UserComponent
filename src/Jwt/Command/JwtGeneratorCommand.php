@@ -62,11 +62,22 @@ HELP
 
         $user = reset($users);
 
-        if ($input->hasOption('role') && !in_array($input->getOption('role'), $user->getRoles())) {
+        if ($input->hasOption('role')
+            && null !== $input->getOption('role')
+            && !in_array($input->getOption('role'), $user->getRoles())
+        ) {
+            $find = false;
             foreach ($users as $item) {
                 if (in_array($input->getOption('role'), $item->getRoles())) {
                     $user = $item;
+                    $find = true;
                 }
+            }
+
+            if (!$find) {
+                $output->writeln(sprintf('<error>User with role "%s" doesn\'t exist.<error>', $input->getOption('role')));
+
+                return;
             }
         }
 
