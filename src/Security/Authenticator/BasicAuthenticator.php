@@ -33,12 +33,12 @@ class BasicAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         if (null === $authorization = $request->headers->get('Authorization')) {
-            return;
+            throw new UnauthorizedHttpException('Basic', 'Header Authorization not found');
         }
 
         $matches = [];
         if (1 !== preg_match('/^Basic (.+)$/', $authorization, $matches)) {
-            return;
+            throw new UnauthorizedHttpException('Basic', 'Header Basic Authorization not found');
         }
 
         list($authorization, $realm) = $matches;

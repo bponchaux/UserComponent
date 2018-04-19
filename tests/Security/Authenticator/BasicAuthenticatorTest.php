@@ -26,21 +26,23 @@ class BasicAuthenticatorTest extends TestCase
         $this->authenticator = new BasicAuthenticator($this->encoders->reveal());
     }
 
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+     */
     public function testGetCredentialsFailedWithoutHeaders()
     {
         $request = new Request([], [], [], [], [], [], null);
         $credentials = $this->authenticator->getCredentials($request);
-
-        $this->assertNull($credentials);
     }
 
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+     */
     public function testGetCredentialsFailedWithBadHeaders()
     {
         $server = ['HTTP_AUTHORIZATION' => 'Bad authorization'];
         $request = new Request([], [], [], [], [], $server, null);
         $credentials = $this->authenticator->getCredentials($request);
-
-        $this->assertNull($credentials);
     }
 
     public function testGetCredentialsSuccess()
