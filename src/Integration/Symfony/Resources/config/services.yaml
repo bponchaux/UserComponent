@@ -6,3 +6,7 @@ services:
     Biig\Component\User\Jwt\Command\JwtGeneratorCommand:
         tags:
             - { name: 'console.command' }
+
+    Biig\Component\User\Security\AuthenticatedUserProvider:
+        arguments:
+            $tokenStorage: '@security.token_storage'
