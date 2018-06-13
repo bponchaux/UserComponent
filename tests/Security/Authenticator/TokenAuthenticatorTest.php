@@ -7,6 +7,7 @@ use Biig\Component\User\Security\Authenticator\TokenAuthenticator;
 use Biig\Component\User\Security\User\UserTokenProviderInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
@@ -73,7 +74,7 @@ class TokenAuthenticatorTest extends TestCase
     {
         $request = new Request([], [], [], [], [], [], null);
 
-        $this->expectException(UnauthorizedHttpException::class);
+        $this->expectException(AccessDeniedHttpException::class);
 
         $exception = $this->prophesize(AuthenticationException::class);
         $this->authenticator->onAuthenticationFailure($request, $exception->reveal());
