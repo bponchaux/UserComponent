@@ -3,6 +3,7 @@
 namespace Biig\Component\User\Security\Authenticator;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -49,7 +50,7 @@ class EmailAuthenticator extends AbstractGuardAuthenticator
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        throw new UnauthorizedHttpException('Email', 'Bad credentials');
+        throw new AccessDeniedHttpException('Bad credentials');
     }
 
     /**
