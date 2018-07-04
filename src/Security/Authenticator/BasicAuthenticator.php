@@ -44,17 +44,15 @@ class BasicAuthenticator extends AbstractGuardAuthenticator
         list($authorization, $realm) = $matches;
 
         $realm = \base64_decode($realm, true);
-        $realm = \explode(':', $realm);
+        $delimiterPos = \strpos($realm, ':');
 
-        if (2 !== \count($realm)) {
+        if (false === $delimiterPos) {
             throw new UnauthorizedHttpException('Basic', 'Base64 decode error. Require 2 parameters');
         }
 
-        list($username, $password) = $realm;
-
         return [
-            'username' => $username,
-            'password' => $password,
+            'username' => \substr($realm, 0, $delimiterPos),
+            'password' => \substr($realm, $delimiterPos + 1),
         ];
     }
 

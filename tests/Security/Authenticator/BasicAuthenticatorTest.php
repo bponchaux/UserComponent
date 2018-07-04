@@ -47,14 +47,30 @@ class BasicAuthenticatorTest extends TestCase
 
     public function testGetCredentialsSuccess()
     {
-        $server = ['HTTP_AUTHORIZATION' => 'Basic ' . \base64_encode('foo:bar')];
+        $identifier = 'foo';
+        $password = 'ThisIsAVerySecuredPassword1234567890,?;.:/=+ù%`£^*¨*€&(§!)-_';
+
+        $server = ['HTTP_AUTHORIZATION' => 'Basic ' . \base64_encode("{$identifier}:{$password}")];
         $request = new Request([], [], [], [], [], $server, null);
         $credentials = $this->authenticator->getCredentials($request);
 
         $this->assertSame($credentials, [
-            'username' => 'foo',
-            'password' => 'bar',
+            'username' => $identifier,
+            'password' => $password,
         ]);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+     */
+    public function testGetCredentialsFails()
+    {
+        $identifier = 'foo';
+        $password = 'bar';
+
+        $server = ['HTTP_AUTHORIZATION' => 'Basic ' . \base64_encode("{$identifier}{$password}")];
+        $request = new Request([], [], [], [], [], $server, null);
+        $credentials = $this->authenticator->getCredentials($request);
     }
 
     public function testGetUser()
