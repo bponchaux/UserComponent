@@ -1,7 +1,7 @@
 {
     "name": "biig/user",
     "type": "library",
-    "license": "proprietary",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Biig\\Component\\User\\": "./src/"
