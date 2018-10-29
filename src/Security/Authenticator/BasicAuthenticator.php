@@ -14,6 +14,8 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 /**
  * Class BasicAuthenticator.
+ * @deprecated You should use the standard way of Symfony to do it. Learn more here:
+ *             https://symfony.com/doc/current/security/auth_providers.html#security-http-basic
  */
 class BasicAuthenticator extends AbstractGuardAuthenticator
 {
