@@ -36,7 +36,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         if (!$request->attributes->has('token')) {
-            throw new PreconditionFailedHttpException('token parameter is missing');
+            throw new PreconditionFailedHttpException('Token parameter is missing');
         }
 
         return ['token' => $request->attributes->get('token')];

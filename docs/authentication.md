@@ -5,9 +5,10 @@ _Based on Guard, many authenticators are available to set your authentication sy
 
 ### Available authenticators
 
-- BasicAuthenticator: expect a basic authentication with valid username and password
-- EmailAuthenticator: expect a valid email
-- TokenAuthenticator: expect a valid token 
+- EmailAuthenticator: authenticate a user via its email only (given as query). Be sure to do **only** forget password features like.
+- TokenAuthenticator: expect a valid token
+
+This 2 authenticator **MUST** be defined as stateless.
 
 ### User model
 
@@ -16,6 +17,8 @@ The User model must implement `Symfony\Component\Security\Core\User\UserInterfac
 ### User repository
 
 The User repository must implement `Biig\Component\User\Security\User\UserTokenProviderInterface`
+
+_This is required only for TokenAuthentication._
 
 ### Services definition
 
@@ -51,14 +54,14 @@ security:
             pattern: ^/login
             anonymous: ~
             provider: user_provider
-            guard:
-                authenticators:
-                    - Biig\Component\User\Security\Authenticator\BasicAuthenticator
+            http_basic: ~
+            stateless: true
 
         reset_password:
             pattern: ^/reset-password
             anonymous: ~
             provider: user_provider
+            stateless: true
             guard:
                 authenticators:
                     - Biig\Component\User\Security\Authenticator\TokenAuthenticator
@@ -67,6 +70,7 @@ security:
             pattern: ^/forget-password
             anonymous: ~
             provider: user_provider
+            stateless: true
             guard:
                 authenticators:
                     - Biig\Component\User\Security\Authenticator\EmailAuthenticator
