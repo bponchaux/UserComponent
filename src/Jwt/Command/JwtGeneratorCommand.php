@@ -35,6 +35,7 @@ class JwtGeneratorCommand extends Command
             ->setName('biig:jwt:generate')
             ->setDescription('Generate the first user JWT Token.')
             ->addOption('role', 'r', InputOption::VALUE_OPTIONAL, 'Specify what role you want')
+            ->addOption('email', null, InputOption::VALUE_OPTIONAL, 'Specify what email the user should have')
             ->setHelp(<<<HELP
 This command is only to use in the context of the tests.
 
@@ -62,23 +63,20 @@ HELP
 
         $user = reset($users);
 
-        if ($input->hasOption('role')
+        if ($input->hasOption('email')
+            && null !== $input->getOption('email'))
+        {
+            $user = $this->findByEmail($input->getOption('email'), $output, $user, $users);
+        }
+        else if ($input->hasOption('role')
             && null !== $input->getOption('role')
-            && !in_array($input->getOption('role'), $user->getRoles())
-        ) {
-            $find = false;
-            foreach ($users as $item) {
-                if (in_array($input->getOption('role'), $item->getRoles())) {
-                    $user = $item;
-                    $find = true;
-                }
-            }
+            && !in_array($input->getOption('role'), $user->getRoles()))
+        {
+            $user = $this->findOneByRole($input, $output, $users);
+        }
 
-            if (!$find) {
-                $output->writeln(sprintf('<error>User with role "%s" doesn\'t exist.<error>', $input->getOption('role')));
-
-                return;
-            }
+        if ($user === null) {
+            return ;
         }
 
         $token = $this->generator->create($user);
@@ -88,5 +86,52 @@ HELP
             'Roles: ' . implode(', ', $user->getRoles()),
             'Token: ' . $token,
         ]);
+    }
+
+    /**
+     * @param string          $email
+     * @param OutputInterface $output
+     * @param                 $user
+     * @param array           $users
+     *
+     * @return mixed
+     */
+    private function findByEmail(string $email, OutputInterface $output, $user, array $users)
+    {
+        if (!method_exists($user, 'getEmail')) {
+            $output->writeln('<error>User Class does not have a getEmail() method<error>');
+
+            return null;
+        }
+
+        foreach ($users as $item) {
+            if ($email === $item->getEmail()) {
+                return $item;
+            }
+        }
+
+        $output->writeln(sprintf('<error>User with email "%s" doesn\'t exist.<error>', $input->getOption('email')));
+
+        return null;
+    }
+
+    /**
+     * @param string          $role
+     * @param OutputInterface $output
+     * @param array           $users
+     *
+     * @return mixed
+     */
+    protected function findOneByRole(string $role, OutputInterface $output, array $users)
+    {
+        foreach ($users as $item) {
+            if (in_array($role, $item->getRoles())) {
+                return $item;
+            }
+        }
+
+        $output->writeln(sprintf('<error>User with role "%s" doesn\'t exist.<error>', $role));
+
+        return null;
     }
 }
